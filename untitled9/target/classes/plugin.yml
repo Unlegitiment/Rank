@@ -1,0 +1,11 @@
+name: test4
+version: '1.0'
+main: me.unlegitiment.test4.Test4
+api-version: 1.19
+commands:
+  testDEV:
+    description: test
+  test2:
+    description: test2
+  rank:
+    description: Rank Changer File
