@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class RankManager {
     private FileManager fileManager;
-    private File BUKKITFOLDER = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
+    //private File BUKKITFOLDER = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
     private String RANKSYML = "ranks.yml";
     //private String RANKINPUT;
     private Rank rank;
@@ -22,7 +22,7 @@ public class RankManager {
         this.fileManager = new FileManager(fileManager.getTest4());
     }
     public File getRanksFile(){
-            File f = new File(BUKKITFOLDER, RANKSYML);
+            File f = new File(Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder(), RANKSYML);
             if(!f.exists()){
                 setUpRanksFile();
                 return f;
@@ -31,7 +31,7 @@ public class RankManager {
             }
     }
     public void setUpRanksFile(){
-        File f = new File(BUKKITFOLDER, RANKSYML);
+        File f = new File(Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder(), RANKSYML);
         if(!f.exists()){
             try {
                 f.createNewFile();
@@ -44,7 +44,7 @@ public class RankManager {
         }
     }
     private void setUpRankData(){
-        File f = new File(BUKKITFOLDER,RANKSYML);
+        File f = new File(Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder(),RANKSYML);
         if(!f.exists()) setUpRanksFile();
         FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
         //fC.createSection(createRank());
@@ -64,5 +64,19 @@ public class RankManager {
 
     public void setRank(Rank rank) {
         this.rank = rank;
+    }
+    public void baseRank(Player p){
+        File f = fileManager.getFileFromPlayer(p);
+        FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
+        Rank r = new Rank("DEFAULT","null",0);
+        ConfigurationSection zf = fC.createSection("player.ranks."+r.getName());
+        zf.set("type",r.getType());
+        zf.set("rankval",r.getRankVal());
+        zf.set("prefix",r.getPrefix());
+        try {
+            fC.save(f);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -18,26 +18,25 @@ public class FileManager {
     private  File file;
     private  FileConfiguration customFile;
     private static Test4 test4;
-    private Plugin PLUGIN = Bukkit.getServer().getPluginManager().getPlugin("test4");
+    //private Plugin PLUGIN = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
 
     private RankManager rankManager;
 
     public FileManager(Test4 core) {
         test4 = core;
-        this.rankManager = new RankManager(this);
     }
 
     public static Test4  getTest4() {
         return test4;
     }
     public void folderCreate(){
-        File f = PLUGIN.getDataFolder();
+        File f = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
         if(f.exists()) {
             getTest4().LOGGER.log(Level.INFO, "Folder Exists Stopping Folder Create!");
             return;
         }
-        PLUGIN.getConfig().options().copyDefaults(true);
-        PLUGIN.saveDefaultConfig();
+        Bukkit.getServer().getPluginManager().getPlugin("test4").getConfig().options().copyDefaults(true);
+        Bukkit.getPluginManager().getPlugin("test4").saveDefaultConfig();
 
 
         for(File fz : f.listFiles()){
@@ -47,7 +46,7 @@ public class FileManager {
         }
     }
     public void setup(String fileName){
-        file = new File(PLUGIN.getDataFolder(),fileName +".yml");
+        file = new File(Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder(),fileName +".yml");
         if(!file.exists()){
             try{
                 file.createNewFile();
@@ -63,7 +62,7 @@ public class FileManager {
     @Deprecated
     public FileConfiguration getFilefromUUID(UUID u) {
         String fName = u.toString() + ".yml";
-        File folder = PLUGIN.getDataFolder();
+        File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
         for(File file : folder.listFiles()){
             String ffName = file.getName();
             if(ffName.equals(fName)){
@@ -77,7 +76,7 @@ public class FileManager {
     }
     public File getFileFromPlayer(Player p){
         String s = p.getUniqueId() + ".yml";
-        File folder = PLUGIN.getDataFolder();
+        File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
         if(folder.listFiles().length == 0){
             File f = new File(folder,s);
             try {
@@ -103,7 +102,7 @@ public class FileManager {
     @Deprecated
     public File getFileFromUUID(UUID uuid){
         String s = uuid + ".yml";
-        File folder = PLUGIN.getDataFolder();
+        File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
         if(folder.listFiles().length == 0 ) {
             File f = new File(folder, s);
             try {
@@ -149,7 +148,7 @@ public class FileManager {
         customFile = YamlConfiguration.loadConfiguration(file);
     }
     public File returnFileFromPlayer (Player p){
-        File folder = PLUGIN.getDataFolder();
+        File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
         for (File f : folder.listFiles()){
             if(f.getName().equals(String.valueOf(p.getUniqueId()) + ".yml")){
                 p.sendMessage(f.getAbsolutePath());
@@ -164,7 +163,7 @@ public class FileManager {
         return f;
     }
     public FileConfiguration returnFileConfFromPlayer(Player p){
-        File folder = PLUGIN.getDataFolder();
+        File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
         for (File f : folder.listFiles()){
             if(f.getName().equals(String.valueOf(p.getUniqueId()) + ".yml")){
                 p.sendMessage(f.getAbsolutePath());
@@ -211,6 +210,8 @@ public class FileManager {
             player.set("rank.type","DEFAULT");
             player.set("rank.prefix","");
         }
+        /*Need to rework above statement to create a new rank everytime that its initialized which is whenever a new
+        * player joins*/
     }
 
     public RankManager getRankManager() {

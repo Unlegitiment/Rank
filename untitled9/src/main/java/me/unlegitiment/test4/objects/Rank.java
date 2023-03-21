@@ -1,13 +1,16 @@
 package me.unlegitiment.test4.objects;
 
 import me.unlegitiment.test4.manager.FileManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.IOException;
 
 public class Rank {
     private String name;
@@ -56,18 +59,30 @@ public class Rank {
 
 
     public String getName() {
-        File f = fileManager.getRankManager().getRanksFile();
-        FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
-        ConfigurationSection path = fC.getConfigurationSection("ranks."+name);
-        name = path.getName();
         return name;
     }
-
+    protected String getNamefromPlayer(Player p ){
+        File f = fileManager.getFileFromPlayer(p);
+        FileConfiguration fC = fileManager.getFileConfFromFile(f);
+        ConfigurationSection ranks = fC.getConfigurationSection("player.ranks."+ getName());
+        if(!ranks.contains(getName())) return "null";
+        return ranks.getConfigurationSection(getName()).getName();
+    }
+    public static Rank getRank(Player p){
+        FileManager fM = new FileManager(FileManager.getTest4());
+        File f = fM.getFileFromPlayer(p);
+        FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
+        ConfigurationSection rank = fC.getConfigurationSection("player.ranks." + getRank(p).getNamefromPlayer(p));
+        Rank r = new Rank(rank.getName(), rank.getString(""), rank.getInt("rankval"),"[OWNER]",ChatColor.RED);
+        try {
+            fC.save(f);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return r;
+    }
     public Rank setName(String name) {
         this.name = name;
-        File f  = fileManager.getRankManager().getRanksFile();
-        FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
-        ConfigurationSection path = fC.createSection("ranks."+name);
         return this;
     }
 
@@ -87,5 +102,21 @@ public class Rank {
     public Rank setRankVal(int rankVal) {
         this.rankVal = rankVal;
         return this;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public ChatColor getPrefixColor() {
+        return prefixColor;
+    }
+
+    public ChatColor getSuffixColor() {
+        return suffixColor;
     }
 }
