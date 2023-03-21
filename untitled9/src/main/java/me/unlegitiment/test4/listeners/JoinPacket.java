@@ -34,7 +34,7 @@ public class JoinPacket implements Listener {
         p.sendMessage("Color: " + colorCode);
         //rank.setColor();
         rank.addEntry(p.getName());
-        ClientboundPlayerInfoUpdatePacket
+
 
 
     }
