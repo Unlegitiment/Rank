@@ -19,6 +19,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -44,8 +45,9 @@ public final class Test4 extends JavaPlugin {
         fileManager.folderCreate();
 
         for(Player p : Bukkit.getOnlinePlayers()){
-            rankManager.baseRank(p);
-
+            fileManager.fileSetup(fileManager.getFileConfFromFile(fileManager.getFileFromPlayer(p)), p);
+            rankManager.baseRank(p,RankManager.getRank(p));
+            //Startup(p);
         }
 
 
@@ -64,9 +66,16 @@ public final class Test4 extends JavaPlugin {
             t.unregister();
         }
     }
-    private void Startup(Player p){
+    public void Startup(Player p){
         File f = fileManager.getFileFromPlayer(p);
         FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
+        ConfigurationSection rank = fC.getConfigurationSection("player.ranks");
+        rank.get("prefix");
+        Scoreboard scoreboard = p.getScoreboard();
+        Team t = scoreboard.registerNewTeam(rank.getName());
+        t.setColor((ChatColor) Objects.requireNonNull(rank.get("prefixColor")));
+        t.setPrefix(Objects.requireNonNull(rank.getString("prefix")));
+        t.addEntry(Objects.requireNonNull(fC.getString("player.names.basicName")));
 
     }
 

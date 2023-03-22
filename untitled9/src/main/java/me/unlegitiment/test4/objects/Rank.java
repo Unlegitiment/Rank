@@ -32,6 +32,7 @@ public class Rank {
         this.prefixColor = prefixColor;
         this.suffixColor = suffixColor;
         this.fileManager = new FileManager(FileManager.getTest4());
+
     }
     public Rank(String name, String type, int rankVal, String prefix, ChatColor prefixColor){
         this.name = name;
@@ -58,6 +59,7 @@ public class Rank {
     }
 
 
+
     public String getName() {
         return name;
     }
@@ -72,8 +74,8 @@ public class Rank {
         FileManager fM = new FileManager(FileManager.getTest4());
         File f = fM.getFileFromPlayer(p);
         FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
-        ConfigurationSection rank = fC.getConfigurationSection("player.ranks." + getRank(p).getNamefromPlayer(p));
-        Rank r = new Rank(rank.getName(), rank.getString(""), rank.getInt("rankval"),"[OWNER]",ChatColor.RED);
+        ConfigurationSection rank = fC.getConfigurationSection("player.ranks." + Rank.getRank(p).getName());
+        Rank r = new Rank(rank.getName(),rank.getString("type"), rank.getInt("rankval"),rank.getString("prefix"),(ChatColor) rank.get("prefixColor"));
         try {
             fC.save(f);
         } catch (IOException e) {

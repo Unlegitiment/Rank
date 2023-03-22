@@ -2,6 +2,7 @@ package me.unlegitiment.test4.manager;
 
 import me.unlegitiment.test4.objects.Rank;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,7 +20,7 @@ public class RankManager {
     private Rank rank;
 
     public RankManager(FileManager fileManager) {
-        this.fileManager = new FileManager(fileManager.getTest4());
+        this.fileManager = fileManager;
     }
     public File getRanksFile(){
             File f = new File(Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder(), RANKSYML);
@@ -65,18 +66,36 @@ public class RankManager {
     public void setRank(Rank rank) {
         this.rank = rank;
     }
-    public void baseRank(Player p){
+    public void baseRank(Player p, Rank r){
         File f = fileManager.getFileFromPlayer(p);
         FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
-        Rank r = new Rank("DEFAULT","null",0);
-        ConfigurationSection zf = fC.createSection("player.ranks."+r.getName());
-        zf.set("type",r.getType());
-        zf.set("rankval",r.getRankVal());
-        zf.set("prefix",r.getPrefix());
+        if(!fC.contains("player.ranks")) {
+            fC.createSection("player.ranks");
+        }
+        ConfigurationSection configurationSection = fC.getConfigurationSection("player.ranks");
+        configurationSection.set("name",r.getName());
+        configurationSection.set("prefix",r.getPrefix());
+        configurationSection.set("prefixColor",r.getPrefixColor().toString());
+        configurationSection.set("type",r.getType());
+        configurationSection.set("rankval",r.getRankVal());
         try {
             fC.save(f);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    public static Rank getRank(Player p){
+        FileManager fM = new FileManager(FileManager.getTest4());
+        FileConfiguration fC = fM.getFileConfFromFile(fM.getFileFromPlayer(p));
+        RankManager rM = new RankManager(fM);
+
+        ConfigurationSection configurationSection = fC.getConfigurationSection("player.ranks");
+        String name = configurationSection.getString("name");
+        String prefix = configurationSection.getString("prefix");
+        Object prefixColor = configurationSection.get("prefixColor");
+        String type = configurationSection.getString("type");
+        int rankval = configurationSection.getInt("rankval");
+        Rank r = new Rank(name,type,rankval,prefix, ChatColor.RED);
+        return r;
     }
 }

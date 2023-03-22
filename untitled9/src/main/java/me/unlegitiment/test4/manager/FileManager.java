@@ -1,7 +1,9 @@
 package me.unlegitiment.test4.manager;
 
 import me.unlegitiment.test4.Test4;
+import me.unlegitiment.test4.objects.Rank;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -24,6 +26,7 @@ public class FileManager {
 
     public FileManager(Test4 core) {
         test4 = core;
+        this.rankManager = new RankManager(this);
     }
 
     public static Test4  getTest4() {
@@ -207,8 +210,8 @@ public class FileManager {
         location.set("coords.pitch",p.getLocation().getPitch());
         location.set("coords.yaw",p.getLocation().getYaw());
         if(p.getName().equals("Unlegitiment")){
-            player.set("rank.type","DEFAULT");
-            player.set("rank.prefix","");
+            Rank r = new Rank("OWNER", "OWNER", 100, "[OWNER]", ChatColor.RED);
+            rankManager.baseRank(p,r);
         }
         /*Need to rework above statement to create a new rank everytime that its initialized which is whenever a new
         * player joins*/

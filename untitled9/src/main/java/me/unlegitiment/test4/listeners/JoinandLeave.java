@@ -29,6 +29,10 @@ public class JoinandLeave implements Listener {
     private void onPlayerJoin(PlayerJoinEvent e){
         Player p = e.getPlayer();
         onJoinFile(p);
+        File f = fileManager.getFileFromPlayer(p);
+        FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
+        fileManager.fileSetup(fC,p);
+        FileManager.getTest4().Startup(p);
     }
     @EventHandler
     private void onKick(PlayerKickEvent e){
