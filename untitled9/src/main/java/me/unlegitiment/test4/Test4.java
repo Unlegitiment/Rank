@@ -6,20 +6,17 @@ import me.unlegitiment.test4.commands.test2;
 import me.unlegitiment.test4.listeners.JoinandLeave;
 import me.unlegitiment.test4.manager.FileManager;
 import me.unlegitiment.test4.manager.RankManager;
-import me.unlegitiment.test4.objects.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
-import java.io.File;
-import java.util.Objects;
+import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -46,8 +43,13 @@ public final class Test4 extends JavaPlugin {
 
         for(Player p : Bukkit.getOnlinePlayers()){
             fileManager.fileSetup(fileManager.getFileConfFromFile(fileManager.getFileFromPlayer(p)), p);
-            rankManager.baseRank(p,RankManager.getRank(p));
-            //Startup(p);
+            //rankManager.baseRank(p,RankManager.getRank(p));
+            FileConfiguration fC = fileManager.getFileConfFromFile(fileManager.getFileFromPlayer(p));
+            try {
+                fC.save(fileManager.getFileFromPlayer(p));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
 
@@ -66,17 +68,27 @@ public final class Test4 extends JavaPlugin {
             t.unregister();
         }
     }
-    public void Startup(Player p){
-        File f = fileManager.getFileFromPlayer(p);
-        FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
-        ConfigurationSection rank = fC.getConfigurationSection("player.ranks");
-        rank.get("prefix");
-        Scoreboard scoreboard = p.getScoreboard();
-        Team t = scoreboard.registerNewTeam(rank.getName());
-        t.setColor((ChatColor) Objects.requireNonNull(rank.get("prefixColor")));
-        t.setPrefix(Objects.requireNonNull(rank.getString("prefix")));
-        t.addEntry(Objects.requireNonNull(fC.getString("player.names.basicName")));
+
+    private void convertColor(ConfigurationSection rank){
+        String prefix = rank.getString("prefixColor");
+        prefix = prefix.replaceAll("&0", ChatColor.BLACK + "");
+        prefix = prefix.replaceAll("&1", ChatColor.DARK_BLUE + "");
+        prefix = prefix.replaceAll("&2", ChatColor.DARK_GREEN + "");
+        prefix = prefix.replaceAll("&3", ChatColor.DARK_AQUA + "");
+        prefix = prefix.replaceAll("&4", ChatColor.DARK_RED + "");
+        prefix = prefix.replaceAll("&5", ChatColor.DARK_PURPLE + "");
+        prefix = prefix.replaceAll("&6", ChatColor.GOLD + "");
+        prefix = prefix.replaceAll("&7", ChatColor.GRAY + "");
+        prefix = prefix.replaceAll("&8", ChatColor.DARK_GRAY+ "");
+        prefix = prefix.replaceAll("&9", ChatColor.BLUE + "");
+        prefix = prefix.replaceAll("&a", ChatColor.GREEN + "");
+        prefix = prefix.replaceAll("&b", ChatColor.AQUA + "");
+        prefix = prefix.replaceAll("&c", ChatColor.RED + "");
+        prefix = prefix.replaceAll("&d", ChatColor.LIGHT_PURPLE + "");
+        prefix = prefix.replaceAll("&e", ChatColor.YELLOW + "");
+        prefix = prefix.replaceAll("&f", ChatColor.WHITE + "");
+        prefix = prefix.replaceAll("&g", ChatColor.MAGIC + "");
+        rank.set("prefixColor",prefix);
 
     }
-
 }

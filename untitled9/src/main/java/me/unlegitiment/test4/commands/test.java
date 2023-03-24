@@ -25,7 +25,7 @@ public class test implements CommandExecutor {
         if(commandSender instanceof Player){
             Player p = (((Player) commandSender).getPlayer());
             assert p != null;
-            File f = filemanager.returnFileFromPlayer(p);
+            File f = filemanager.getFileFromPlayer(p);
             FileConfiguration fC = filemanager.getFileConfFromFile(f);
             fC.set("player.loc", p.getLocation());
             try {

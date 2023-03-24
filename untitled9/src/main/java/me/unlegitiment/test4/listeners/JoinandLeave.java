@@ -1,7 +1,9 @@
 package me.unlegitiment.test4.listeners;
 
+import me.unlegitiment.test4.Test4;
 import me.unlegitiment.test4.manager.FileManager;
 import me.unlegitiment.test4.manager.RankManager;
+import me.unlegitiment.test4.objects.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -26,13 +28,9 @@ public class JoinandLeave implements Listener {
     }
 
     @EventHandler
-    private void onPlayerJoin(PlayerJoinEvent e){
+    private void onPlayerJoin(PlayerJoinEvent e) throws IOException {
         Player p = e.getPlayer();
         onJoinFile(p);
-        File f = fileManager.getFileFromPlayer(p);
-        FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
-        fileManager.fileSetup(fC,p);
-        FileManager.getTest4().Startup(p);
     }
     @EventHandler
     private void onKick(PlayerKickEvent e){
@@ -70,7 +68,7 @@ public class JoinandLeave implements Listener {
     }
     private void onJoinFile(Player p){
         File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
-        File f = new File(folder, p.getUniqueId() + ".yml");
+        File f = fileManager.getFileFromPlayer(p);
         FileConfiguration fC;
         if(!f.exists()){
             try {
@@ -84,6 +82,7 @@ public class JoinandLeave implements Listener {
             }
         } else {
             fC = YamlConfiguration.loadConfiguration(f);
+            fileManager.fileSetup(fC,p);
             try {
                 fC.save(f);
             } catch (IOException ex) {

@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.logging.Level;
 
 public class FileManager {
@@ -21,14 +22,16 @@ public class FileManager {
     private  FileConfiguration customFile;
     private static Test4 test4;
     //private Plugin PLUGIN = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
-
+    /*
+    MUST FIX FILESETUP!
+    FILE SETUP NO LONGER DEALS WITH RANKS! EDIT RANKS IN RANKMANAGER!
+     */
     private RankManager rankManager;
 
     public FileManager(Test4 core) {
         test4 = core;
         this.rankManager = new RankManager(this);
     }
-
     public static Test4  getTest4() {
         return test4;
     }
@@ -47,35 +50,6 @@ public class FileManager {
                 fz.delete();
             }
         }
-    }
-    public void setup(String fileName){
-        file = new File(Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder(),fileName +".yml");
-        if(!file.exists()){
-            try{
-                file.createNewFile();
-            } catch (IOException e) {
-                Bukkit.getPluginManager().disablePlugin(test4);
-            }
-        }
-        customFile = YamlConfiguration.loadConfiguration(file);
-    }
-    public FileConfiguration getCustomFile(){
-        return customFile;
-    }
-    @Deprecated
-    public FileConfiguration getFilefromUUID(UUID u) {
-        String fName = u.toString() + ".yml";
-        File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
-        for(File file : folder.listFiles()){
-            String ffName = file.getName();
-            if(ffName.equals(fName)){
-                File f = new File(fName);
-                FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
-                return fC;
-
-            }
-        }
-        return null;
     }
     public File getFileFromPlayer(Player p){
         String s = p.getUniqueId() + ".yml";
@@ -102,90 +76,7 @@ public class FileManager {
         }
         return null;
     }
-    @Deprecated
-    public File getFileFromUUID(UUID uuid){
-        String s = uuid + ".yml";
-        File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
-        if(folder.listFiles().length == 0 ) {
-            File f = new File(folder, s);
-            try {
-                f.createNewFile();
 
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        for(File f : Objects.requireNonNull(folder.listFiles())){
-            if(f.getName().equals(s)){ return f; } else {
-                try {
-                    f = new File(folder, s);
-                    f.createNewFile();
-                    return f;
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        return null;
-    }
-
-    public void saveCustomFile(){
-        try {
-            customFile.save(file);
-        } catch (IOException e) {
-            test4.LOGGER.log(Level.SEVERE, "Couldn't Save File Continuing Operation");
-        }
-    }
-    public void saveYMLFile(File f){
-        FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
-        try {
-            fC.save(f);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public  void reload(){
-        customFile = YamlConfiguration.loadConfiguration(file);
-    }
-    public File returnFileFromPlayer (Player p){
-        File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
-        for (File f : folder.listFiles()){
-            if(f.getName().equals(String.valueOf(p.getUniqueId()) + ".yml")){
-                p.sendMessage(f.getAbsolutePath());
-            }
-        }
-        File f = new File(folder,String.valueOf(p.getUniqueId()) + ".yml");
-        try {
-            f.createNewFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return f;
-    }
-    public FileConfiguration returnFileConfFromPlayer(Player p){
-        File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
-        for (File f : folder.listFiles()){
-            if(f.getName().equals(String.valueOf(p.getUniqueId()) + ".yml")){
-                p.sendMessage(f.getAbsolutePath());
-            }
-        }
-        File f = new File(folder,String.valueOf(p.getUniqueId()) + ".yml");
-        try {
-            f.createNewFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
-        try {
-            fC.save(f);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return fC;
-    }
     public FileConfiguration getFileConfFromFile(File f){
         FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
         try {
@@ -209,14 +100,7 @@ public class FileManager {
         location.set("coords.z",p.getLocation().getZ());
         location.set("coords.pitch",p.getLocation().getPitch());
         location.set("coords.yaw",p.getLocation().getYaw());
-        if(p.getName().equals("Unlegitiment")){
-            Rank r = new Rank("OWNER", "OWNER", 100, "[OWNER]", ChatColor.RED);
-            rankManager.baseRank(p,r);
-        }
-        /*Need to rework above statement to create a new rank everytime that its initialized which is whenever a new
-        * player joins*/
     }
-
     public RankManager getRankManager() {
         return rankManager;
     }

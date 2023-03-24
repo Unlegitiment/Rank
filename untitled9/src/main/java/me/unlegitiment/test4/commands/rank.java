@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -35,32 +36,45 @@ public class rank implements CommandExecutor {
             p.sendMessage("Retry and put: /rank set prefix OR ");
             return false;
         }
-            if(strings[0].equalsIgnoreCase("set")&&strings[1].equalsIgnoreCase("type")){
-            assert p != null;
-            File f = fileManager.getFileFromPlayer(p);
-            fC = YamlConfiguration.loadConfiguration(f);
-            ConfigurationSection rank = fC.getConfigurationSection("player.rank");
-            rank.set("type",strings[2]);
+            switch(strings[0]){
+                case "set":
+                    FileManager fM = new FileManager(FileManager.getTest4());
+                    switch(strings[1].toLowerCase()){
+                        case "type":
+                            break;
+                        case "prefix":
+                            File f = fM.getFileFromPlayer(p);
+                            FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
+                            String prefix = fC.getString("player.ranks.prefix");
+                            fC.set("player.ranks.prefix",strings[2]);
+                            try {
+                                fC.save(f);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            p.sendMessage(ChatColor.GREEN + "Set PREFIX to " + fC.getString("player.ranks.prefix"));
+                            return true;
+                    }
+                    break;
+                case "create":
+                    break;
+
+            }
+
+            if(strings[0].equalsIgnoreCase("set")&&strings[1].equalsIgnoreCase("type")) {
+                assert p != null;
+                File f = fileManager.getFileFromPlayer(p);
+                fC = YamlConfiguration.loadConfiguration(f);
+                ConfigurationSection rank = fC.getConfigurationSection("player.ranks");
+                rank.set("type", strings[2]);
                 try {
                     fC.save(f);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
                 p.sendMessage("Set rank TYPE to " + String.valueOf(fC.get("player.rank.type")));
-            return true;
-        }else if (strings[0].equalsIgnoreCase("set")&&strings[1].equalsIgnoreCase("prefix")){
-            File f = fileManager.getFileFromPlayer(p);
-            fC = YamlConfiguration.loadConfiguration(f);
-            ConfigurationSection rank = fC.getConfigurationSection("player.rank");
-            fC.set("player.rank.prefix",strings[2]);
-                try {
-                    fC.save(f);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                p.sendMessage("Set rank " + ChatColor.BOLD + ChatColor.GREEN + "PREFIX " + ChatColor.RESET + "to " + String.valueOf(fC.get("player.rank.prefix")));
-            return true;
-        }
+                return true;
+            }
         return true;
     }
 }
