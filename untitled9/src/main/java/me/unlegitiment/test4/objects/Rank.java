@@ -8,7 +8,6 @@ public class Rank {
     private int rankVal;
     private final String prefix;
     private final String suffix;
-
     private final String prefixColorz;
     private final String suffixColorz;
     public Rank(String name, String type, int rankVal, @Nullable String prefix,@Nullable String suffix,@Nullable String prefixColorz,@Nullable String suffixColorz){
@@ -54,11 +53,12 @@ public class Rank {
     public String getSuffix() {
         return suffix;
     }
-    public String getSuffixColorz() {
-        return suffixColorz;
-    }
 
     public String getPrefixColorz() {
         return prefixColorz;
+    }
+
+    public String getSuffixColorz() {
+        return suffixColorz;
     }
 }

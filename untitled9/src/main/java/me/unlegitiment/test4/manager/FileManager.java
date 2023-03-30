@@ -1,20 +1,14 @@
 package me.unlegitiment.test4.manager;
 
 import me.unlegitiment.test4.Test4;
-import me.unlegitiment.test4.objects.Rank;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.logging.Level;
 
 public class FileManager {
@@ -54,25 +48,42 @@ public class FileManager {
     public File getFileFromPlayer(Player p){
         String s = p.getUniqueId() + ".yml";
         File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
+        File f = new File(folder,s);
+        if(folder.listFiles() == null){
+            Bukkit.getLogger().log(Level.WARNING, "I'm not sure what this means lmao XD");
+            return null;
+        }
         if(folder.listFiles().length == 0){
-            File f = new File(folder,s);
+            Bukkit.getLogger().log(Level.SEVERE, "NO FILES FOUND!");
+            if(!f.exists()){
+                try {
+                    f.createNewFile();
+                    FileConfiguration fC = getFileConfFromFile(f);
+                    fileSetup(fC,p);
+                    fC.save(f);
+                    return f;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        for(File z : folder.listFiles()){
+            if(z.getName().equals(s)){
+                return z;
+            }
+        }
+        if(!f.exists()){
             try {
                 f.createNewFile();
-                FileConfiguration fC = getFileConfFromFile(f);
-                fC.save(f);
-                fileSetup(fC, p);
-                fC.save(f);
+                FileConfiguration fileConfFromFile = getFileConfFromFile(f);
+                fileSetup(fileConfFromFile,p);
+                fileConfFromFile.save(f);
                 return f;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            for(int i =0; i <= folder.listFiles().length; i++){
-                File f = folder.listFiles()[i];
-                if(f.getName().equals(s)){
-                    return f;
-                }
-            }
+
+
         }
         return null;
     }
@@ -100,6 +111,7 @@ public class FileManager {
         location.set("coords.z",p.getLocation().getZ());
         location.set("coords.pitch",p.getLocation().getPitch());
         location.set("coords.yaw",p.getLocation().getYaw());
+        rankManager.rankSet(p,null);
     }
     public RankManager getRankManager() {
         return rankManager;

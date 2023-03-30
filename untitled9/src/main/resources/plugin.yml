@@ -9,3 +9,6 @@ commands:
     description: test2
   rank:
     description: Rank Changer File
+  convertcolor:
+    description: test
+    usage: /convertcolor <string>

@@ -1,5 +1,6 @@
 package me.unlegitiment.test4;
 
+import me.unlegitiment.test4.commands.conversionChatColor;
 import me.unlegitiment.test4.commands.rank;
 import me.unlegitiment.test4.commands.test;
 import me.unlegitiment.test4.commands.test2;
@@ -9,14 +10,11 @@ import me.unlegitiment.test4.manager.RankManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
-import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -39,20 +37,8 @@ public final class Test4 extends JavaPlugin {
         getCommand("testDEV").setExecutor(new test(fileManager));
         getCommand("rank").setExecutor(new rank(rankManager));
         getCommand("test2").setExecutor(new test2(fileManager));
+        getCommand("convertcolor").setExecutor(new conversionChatColor());
         fileManager.folderCreate();
-
-        for(Player p : Bukkit.getOnlinePlayers()){
-            fileManager.fileSetup(fileManager.getFileConfFromFile(fileManager.getFileFromPlayer(p)), p);
-            //rankManager.baseRank(p,RankManager.getRank(p));
-            FileConfiguration fC = fileManager.getFileConfFromFile(fileManager.getFileFromPlayer(p));
-            try {
-                fC.save(fileManager.getFileFromPlayer(p));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-
         //LOGGER.log(Level.WARNING, getServer().getPluginManager().getPlugin("test4").getName()+" HAS START");
     }
 

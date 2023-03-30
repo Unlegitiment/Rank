@@ -1,6 +1,5 @@
 package me.unlegitiment.test4.listeners;
 
-import me.unlegitiment.test4.Test4;
 import me.unlegitiment.test4.manager.FileManager;
 import me.unlegitiment.test4.manager.RankManager;
 import me.unlegitiment.test4.objects.Rank;
@@ -16,7 +15,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
 
 public class JoinandLeave implements Listener {
     private final FileManager fileManager;
@@ -43,52 +41,15 @@ public class JoinandLeave implements Listener {
         onQuitorExitFile(p);
     }
     private void onQuitorExitFile(Player p){
-        File folder = Bukkit.getPluginManager().getPlugin("test4").getDataFolder();
-        File f = new File(folder, p.getUniqueId() + ".yml");
-        FileConfiguration fC;
-        if(!f.exists()){
-            try {
-                f.createNewFile();
-                fC = YamlConfiguration.loadConfiguration(f);
-                fC.save(f);
-                fileManager.fileSetup(fC,p);
-                fC.save(f);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        } else {
-            try {
-                fC = YamlConfiguration.loadConfiguration(f);
-                fC.save(f);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
 
-        }
     }
-    private void onJoinFile(Player p){
+    private void onJoinFile(Player p) {
         File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
         File f = fileManager.getFileFromPlayer(p);
-        FileConfiguration fC;
-        if(!f.exists()){
-            try {
-                f.createNewFile();
-                fC = YamlConfiguration.loadConfiguration(f);
-                fC.save(f);
-                fileManager.fileSetup(fC, p);
-                fC.save(f);
-            } catch (IOException ex) {
-                Bukkit.getLogger().log(Level.SEVERE, "Could Not Get Make File for Player UUID: " + p.getUniqueId());
-            }
-        } else {
-            fC = YamlConfiguration.loadConfiguration(f);
-            fileManager.fileSetup(fC,p);
-            try {
-                fC.save(f);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
+        Rank r = rankManager.rankGet(p);
+        rankManager.teamSetup(p);
+        p.sendMessage(r.getName() + r.getType() + r.getPrefixColorz() + r.getPrefix() + r.getSuffixColorz() + r.getSuffix() + r.getRankVal());
     }
 
 

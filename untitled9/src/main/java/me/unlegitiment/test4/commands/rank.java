@@ -2,11 +2,12 @@ package me.unlegitiment.test4.commands;
 
 import me.unlegitiment.test4.manager.FileManager;
 import me.unlegitiment.test4.manager.RankManager;
+import me.unlegitiment.test4.objects.Rank;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -58,7 +59,20 @@ public class rank implements CommandExecutor {
                     break;
                 case "create":
                     break;
-
+                case "get":
+                    Player player = Bukkit.getServer().getPlayer(strings[1]);
+                    if(player == null) {
+                        p.sendMessage(ChatColor.RED + "The args you entered are invalid! Try another player: " + strings[1]);
+                    }
+                    rankManager.rankSet(player,new Rank("OWNER","OWNER", 100,"&c[OWNER]",null,null,null));
+                    Rank r = rankManager.rankGet(p);
+                    p.sendMessage(ChatColor.GOLD + "Rank data for: "+ ChatColor.YELLOW + player.getName());
+                    p.sendMessage(ChatColor.GREEN + r.getName() + "\n" + r.getType() + "\n" + r.getRankVal() + "\n" + r.getPrefix()+ "\n" + r.getSuffix()+ "\n" + r.getSuffixColorz() + "\n" + r.getPrefixColorz());
+                    break;
+                case "team":
+                    for(Player players : Bukkit.getOnlinePlayers()){
+                        fileManager.getRankManager().teamSetup(players);
+                    }
             }
 
             if(strings[0].equalsIgnoreCase("set")&&strings[1].equalsIgnoreCase("type")) {
