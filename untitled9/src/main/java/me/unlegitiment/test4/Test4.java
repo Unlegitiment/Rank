@@ -54,7 +54,7 @@ public final class Test4 extends JavaPlugin {
             t.unregister();
         }
     }
-
+    //maybe this wiuld work fot colorcoversion?
     private void convertColor(ConfigurationSection rank){
         String prefix = rank.getString("prefixColor");
         prefix = prefix.replaceAll("&0", ChatColor.BLACK + "");
