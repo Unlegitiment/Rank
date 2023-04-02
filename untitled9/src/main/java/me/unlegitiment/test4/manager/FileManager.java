@@ -50,8 +50,8 @@ public class FileManager {
         File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
         File f = new File(folder,s);
         if(folder.listFiles() == null){
-            Bukkit.getLogger().log(Level.WARNING, "I'm not sure what this means lmao XD");
-            return null;
+            //Bukkit.getLogger().log(Level.WARNING, "I'm not sure what this means lmao XD");
+            folderCreate();
         }
         if(folder.listFiles().length == 0){
             Bukkit.getLogger().log(Level.SEVERE, "NO FILES FOUND!");
@@ -61,6 +61,7 @@ public class FileManager {
                     FileConfiguration fC = getFileConfFromFile(f);
                     fileSetup(fC,p);
                     fC.save(f);
+                    rankManager.teamSetup(p);
                     return f;
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -115,5 +116,34 @@ public class FileManager {
     }
     public RankManager getRankManager() {
         return rankManager;
+    }
+    public void updateAllRanks(File f){
+        File folder = Bukkit.getServer().getPluginManager().getPlugin("test4").getDataFolder();
+        if(folder.listFiles() == null){
+            return;
+        }
+        File[] fz = folder.listFiles();
+        for(File z : fz){
+            if(!z.getName().equals(f.getName())){
+                FileConfiguration fC = YamlConfiguration.loadConfiguration(z);
+                FileConfiguration fC2 = YamlConfiguration.loadConfiguration(f);
+                if(fC2.getString("player.ranks.type").equals(fC.getString("player.ranks.type"))){
+                    String setTo = fC2.getString("player.ranks.prefix");
+
+                    fC.set("player.ranks.prefix", setTo);
+                    fC.set("player.ranks.name",fC2.getString("player.ranks.name"));
+                    fC.set("player.ranks.prefixColor",fC2.get("player.ranks.prefixColor"));
+                    try {
+                        fC.save(z);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    for(Player players : Bukkit.getOnlinePlayers()){
+                        rankManager.teamSetup(players);
+                    }
+                }
+            }
+        }
     }
 }

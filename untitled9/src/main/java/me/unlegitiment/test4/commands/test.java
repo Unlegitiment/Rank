@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class test implements CommandExecutor {
-    private FileManager filemanager;
+    private final FileManager filemanager;
 
     public test(FileManager fileManager) {
         this.filemanager = fileManager;

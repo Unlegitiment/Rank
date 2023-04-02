@@ -41,6 +41,13 @@ public class JoinandLeave implements Listener {
         onQuitorExitFile(p);
     }
     private void onQuitorExitFile(Player p){
+        FileConfiguration fC = fileManager.getFileConfFromFile(fileManager.getFileFromPlayer(p));
+
+        try {
+            fC.save(fileManager.getFileFromPlayer(p));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
     private void onJoinFile(Player p) {
@@ -49,6 +56,7 @@ public class JoinandLeave implements Listener {
         FileConfiguration fC = YamlConfiguration.loadConfiguration(f);
         Rank r = rankManager.rankGet(p);
         rankManager.teamSetup(p);
+        //FileManager.getTest4().onStartUp();
         p.sendMessage(r.getName() + r.getType() + r.getPrefixColorz() + r.getPrefix() + r.getSuffixColorz() + r.getSuffix() + r.getRankVal());
     }
 

@@ -12,3 +12,6 @@ commands:
   convertcolor:
     description: test
     usage: /convertcolor <string>
+  updateranks:
+    description: test
+    usage: /updateranks <null>

@@ -1,15 +1,14 @@
 package me.unlegitiment.test4;
 
-import me.unlegitiment.test4.commands.conversionChatColor;
-import me.unlegitiment.test4.commands.rank;
-import me.unlegitiment.test4.commands.test;
-import me.unlegitiment.test4.commands.test2;
+import me.unlegitiment.test4.commands.*;
+import me.unlegitiment.test4.listeners.ChatManage;
 import me.unlegitiment.test4.listeners.JoinandLeave;
 import me.unlegitiment.test4.manager.FileManager;
 import me.unlegitiment.test4.manager.RankManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
@@ -34,12 +33,15 @@ public final class Test4 extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         getServer().getPluginManager().registerEvents(new JoinandLeave(fileManager),this);
+        getServer().getPluginManager().registerEvents(new ChatManage(fileManager),this);
+        getCommand("updateranks").setExecutor(new updateRanks(fileManager));
         getCommand("testDEV").setExecutor(new test(fileManager));
         getCommand("rank").setExecutor(new rank(rankManager));
         getCommand("test2").setExecutor(new test2(fileManager));
         getCommand("convertcolor").setExecutor(new conversionChatColor());
         fileManager.folderCreate();
         //LOGGER.log(Level.WARNING, getServer().getPluginManager().getPlugin("test4").getName()+" HAS START");
+        onStartUp();
     }
 
     @Override
@@ -52,6 +54,12 @@ public final class Test4 extends JavaPlugin {
         Set<Team> teams = sc.getTeams();
         for(Team t : teams){
             t.unregister();
+        }
+    }
+    public void onStartUp(){
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        for(Player p : Bukkit.getOnlinePlayers()){
+            fileManager.getRankManager().teamSetup(p);
         }
     }
 
